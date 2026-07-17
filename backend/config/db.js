@@ -14,8 +14,14 @@ import mongoose from "mongoose";
  */
 const connectDB = async () => {
   let uri = process.env.MONGO_URI;
-
   if (!uri || uri === "memory") {
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        "[DB] MONGO_URI is not set in production. Please set MONGO_URI to your MongoDB Atlas connection string."
+      );
+      process.exit(1);
+    }
+
     console.log("[DB] No MONGO_URI set — attempting a temporary in-memory database...");
     try {
       const { MongoMemoryServer } = await import("mongodb-memory-server");
